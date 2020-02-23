@@ -3,6 +3,7 @@ Web based multiplayer game
 <hr>
 
 ### Overview:
+
 This is an web based multiplayer game with the goal to kill off as many monsters as possible.
 
 - The game front end is mostly comprised of **ReactJs**
