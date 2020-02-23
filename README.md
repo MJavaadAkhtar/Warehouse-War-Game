@@ -1,6 +1,7 @@
 # Warehouse-War-Game
 Web based multiplayer game
 <hr>
+
 ### Overview:
 This is an web based multiplayer game with the goal to kill off as many monsters as possible.
 
@@ -33,11 +34,16 @@ For installation, follow the steps below:
 
 ### How to play:
 The main goal of the game is to kill off monsters together, enforcing team work. When you start the game, you will see the following login screen:
+![](images/login.png)
 
 You can register yourself as a player on the registration screen. Once you login, you will be redirected toward a lobby:
+![](images/lobby.png)
 
 Here you can message other people who are present in the lobby. You can also choose your avatar and start the game.
 Once you click `start game`, you will be placed withh other players in theh game. You can move boxes around. **Do not let the monster touch you, or you will die**.You can kill monster by sorrounding it with boxes. The game finishes when you kill all the monsters.
+
+GamePlay:
+![](images/play.png)
 
 Scores are dependent on time, player movement and how many monster a player kills. Top 3 heighest scores are displayed on the main lobby.
 
