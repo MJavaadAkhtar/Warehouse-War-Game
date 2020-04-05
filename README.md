@@ -31,6 +31,7 @@ For installation, follow the steps below:
 
 - Clone the repo
 - Go inside `ww` folder (you can do this by `cd Warehouse-War-Game/ww/`)
+- Load Database file using `sqlite3 database.sqlite3 < schema.sql`
 - Run the game by typing `nodejs ww_node.js` 
 
 ### How to play:
