@@ -34,6 +34,14 @@ For installation, follow the steps below:
 - Load Database file using `sqlite3 database.sqlite3 < schema.sql`
 - Run the game by typing `nodejs ww_node.js` 
 
+### CURL
+You can use CURL command to access REST API. For Example:
+```sh
+>>curl -d '{"username":"pop", "password":"pop"}' -H "Content-Type: application/json" -X POST http://localhost:10820/api/registeredUsers/pop/getData/
+
+{"name":"pop","user_name":"pop","avatar_ID":"coolImg"}
+```
+
 ### How to play:
 The main goal of the game is to kill off monsters together, enforcing team work. When you start the game, you will see the following login screen:
 ![](images/login.png)
