@@ -165,6 +165,39 @@ function getUserHighScore(username) {
 	});
 }
 
+
+app.post('/api/registeredUsers/:user/getData/', function (req, res) {
+	let sql = 'SELECT username,name,avatarID FROM appuser WHERE username=?;';
+
+	var username = "" + req.body.username;
+	var password = "" + req.body.password;
+
+	db.get(sql, [username], (err, row) => {
+		result = {};
+		valid = validateCreds(username, password);
+		if (!valid) {
+			result["error"] = "User is not authorized to get this information";
+		} else {
+			if (err) {
+				result["error"] = "Database retrieval error";
+				console.log(err.message);
+				res.status(500);
+			} else {
+				if (!row) {
+					result["error"] = "Could not retrieve user's name";
+					res.status(500); // For some reason, can't find user in appuser table
+				} else {
+					result["name"] = "" + row.name;
+					result["user_name"] = "" + row.username;
+					result["avatar_ID"] = "" + row.avatarID;
+					res.status(200);
+				}
+			}
+		}
+		res.json(result);
+	});
+});
+
 // Get a specific user's real name
 // POST because getting non-public information
 app.post('/api/registeredUsers/:user/name/', function(req, res) {
