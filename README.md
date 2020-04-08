@@ -32,12 +32,14 @@ For installation, follow the steps below:
 - Clone the repo
 - Go inside `ww` folder (you can do this by `cd Warehouse-War-Game/ww/`)
 - Load Database file using `sqlite3 database.sqlite3 < schema.sql`
-- Run the game by typing `nodejs ww_node.js` 
+- Run the game by typing `nodejs wws.js` 
+
+_NOTE_: If you want to change port number, you can change it at `./ww/static-content/lib/constants.js`
 
 ### CURL
 You can use CURL command to access REST API. For Example:
 ```sh
->>curl -d '{"username":"pop", "password":"pop"}' -H "Content-Type: application/json" -X POST http://localhost:10820/api/registeredUsers/pop/getData/
+>> curl -d '{"username":"pop", "password":"pop"}' -H "Content-Type: application/json" -X POST http://localhost:10820/api/registeredUsers/pop/getData/
 
 {"name":"pop","user_name":"pop","avatar_ID":"coolImg"}
 ```
