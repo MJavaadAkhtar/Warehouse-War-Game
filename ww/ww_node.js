@@ -333,23 +333,31 @@ app.post('/api/highScoresUpdate/:username/', (req,res)=>{
 	var scores = "" + req.body.scores;
 
 	console.log([scores,username]);
-
-	db.run(sql, [scores, username], (err)=>{
-		result = {}
-		if (err){
+	result={}
+	db.get("SELECT score FROM hiscores WHERE username=?", [username], (err,row)=>{
+		if (!row){
+			if (scores > row.score){
+				db.run(sql, [scores, username], (err) => {
+					result = {}
+					if (err) {
+						result["error"] = "failed to update";
+						res.status(401);
+					} else {
+						res.status(200);
+					}
+					res.json(result);
+				});
+			}
+			else{
+				res.status(200);
+			}
+		}
+		else{
 			result["error"] = "failed to update";
 			res.status(401);
-		}else{
-			res.status(200);
 		}
-		res.json(result);
+		
 	});
-
-})
-
-
-//Running a server on a certain port
-require('./wws.js'); // Web socket
-app.listen(port, function () {
-  console.log('Example app listening on port ' + port + '!');
 });
+
+module.exports = app;

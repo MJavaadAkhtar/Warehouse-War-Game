@@ -1,2 +1,0 @@
-1. Same user cannot login twice: second login logs out first login
- done by dina

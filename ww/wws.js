@@ -1,6 +1,12 @@
 // Web socket initialization and functions.
+'use strict';
 require('./static-content/lib/constants.js');
-port = wwPort; // The port number imported from constants.js
+let WebSocketServer = require('ws').Server;
+let server = require('http').createServer();
+let app = require('./ww_node.js');
+
+require('./static-content/lib/constants.js');
+var port = wwPort; // The port number imported from constants.js
 const Stage = require('./Game Components/Stage.js');
 
 var clients={}; // {username: ws object}
@@ -10,9 +16,20 @@ var HSscore = {};
 var latestMove;
 var losers = [];
 
+
+
+let wss = new WebSocketServer({ server: server });
+server.on('request', app);
+
+wss.on('close', function () {
+	console.log('disconnected');
+});
+
+
+
+
 var stage = new Stage(20, 20, "stage", "score", "E", wss);
 stage.initialize();
-
 
 // Updating stage and monsters movement every 0.7 seconds
 setInterval(function () {
@@ -28,13 +45,6 @@ setInterval(function () {
 	}
 }, 700);
 
-//Creating a websocket
-var WebSocketServer = require('ws').Server
-   ,wss = new WebSocketServer({port: wwWsPort});
-
-wss.on('close', function() {
-    console.log('disconnected');
-});
 
 // when someone new connects, listen for their messages, and broadcast if they send
 wss.on('connection', function(ws) {
@@ -58,6 +68,8 @@ wss.on('connection', function(ws) {
 			case "page-change":
 				removeClientFromAllPages(msg.user);
 				if (msg.page === "lobby") {
+
+					// wss.exitGame(msg.user);
 
 					clientsInLobby.push(msg.user);
 					while (losers.length > 0) {
@@ -152,6 +164,25 @@ wss.enterGame = function(username){
 
 }
 
+//exit a client in the game
+wss.exitGame = (username) => {
+	HSscore[username] = 0;
+	let ind = clientsInGame.indexOf(username)
+	if (ind > -1) {
+		clientsInGame.splice(ind, 1);
+	}
+	// clientsInGame.push(username);
+
+
+	// stage.addPlayer(username);
+	stage.removePlayer(username) 
+
+	var augmentedMsg = { type: "chat", state: stage.getStage(), score: stage.getScore() };
+	var ws = clients[username];
+	ws.send(JSON.stringify(augmentedMsg));
+
+}
+
 // Send updated scores to all players in game
 wss.sendScores = function() {
 	for (var i = 0; i < stage.players.length; i++){
@@ -177,3 +208,7 @@ function removeClientFromAllPages(username) {
 
 	console.log(clientsInGame.length)
 }
+
+server.listen(wwPort, ()=>{
+	console.log('Example app listening on port ' + wwPort + '!');
+});
