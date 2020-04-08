@@ -1,6 +1,7 @@
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
 // This is executed when the document is ready (the DOM for this document is loaded)
 var lose = false;
+
 $(function () {
 	// Setup all events here and display the appropriate UI
 	socket = new WebSocket(global.wwWsURL);
@@ -12,32 +13,35 @@ $(function () {
 	}
 	socket.onmessage = function (event) {
 		data = JSON.parse(event.data);
-		switch(data.type){
+		switch (data.type) {
 			case "chat":
 				displayMessage(data.msg);
 				break;
 			case "game":
 				$("#stage").html(data.state);
-				$("#HS").html("Scores:");	
-					//userInHS[data.user] = data.score;
-				for (var users in data.score){
+				$("#HS").html("Scores:");
+				//userInHS[data.user] = data.score;
+				for (var users in data.score) {
+					// setHighScores(users,data.score[users]);
 					$("#HS").append("<br/>" + users + " : " + data.score[users]);
 				}
 				break;
 			case "lose-game":
 				// console.log("lose");
 				$("#lossMsg").html("You lost!");
+				
 				// alert("YOU LOSE!!!");
 				$("#stage").html(data.state);
 				$("#HS").html("Scores:");
 				//userInHS[data.user] = data.score;
 				for (var users in data.score) {
+					console.log(data.score[users])
+					setHighScores(users, data.score[users]);
 					$("#HS").append("<br/>" + users + " : " + data.score[users]);
 				}
-
 				// sendClientToPage("lobby");
 				break;
-			
+
 			case "logout":
 				console.log("here")
 				currentUsername = "";
@@ -52,69 +56,72 @@ $(function () {
 // TO Web socket server
 
 function sendMessage(username, msg) {
-	var augmentedMsg = {type: "chat", user: username, msg: msg };
+	var augmentedMsg = { type: "chat", user: username, msg: msg };
 	socket.send(JSON.stringify(augmentedMsg));
 }
 
 function sendClientToPage(pageName) {
 
-	var augmentedMsg = {type: "page-change", user: currentUsername, page: pageName };
-    socket.send(JSON.stringify(augmentedMsg));
-}
 
-function addActiveClient(){
-	var augmentedMsg = {type: "join", user: currentUsername};
+
+	var augmentedMsg = { type: "page-change", user: currentUsername, page: pageName };
 	socket.send(JSON.stringify(augmentedMsg));
 }
 
-function enterGame(){
-	var augmentedMsg = {type: "game", action: "start", user: currentUsername};
+function addActiveClient() {
+	var augmentedMsg = { type: "join", user: currentUsername };
+	socket.send(JSON.stringify(augmentedMsg));
+}
+
+function enterGame() {
+	var augmentedMsg = { type: "game", action: "start", user: currentUsername };
 	socket.send(JSON.stringify(augmentedMsg));
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------
 // FROM Web socket server
-function displayMessage(msg){
-	$('#messages').append("<br/>"+msg);
+function displayMessage(msg) {
+	$('#messages').append("<br/>" + msg);
 }
 
 // ---------------------------------------------------------------------------------------
-function move(){
-	if (!lose){
+function move() {
+	if (!lose) {
 		document.onkeydown = checkKey;
 		function checkKey(e) {
 			e = e || window.event;
 			if (e.keyCode == '38' || e.keyCode == '87') {
-				var augmentedMsg = { type: "game", action: "move",move : "N",user: currentUsername };
+				var augmentedMsg = { type: "game", action: "move", move: "N", user: currentUsername };
 				socket.send(JSON.stringify(augmentedMsg));
 			}
 			else if (e.keyCode == '40' || e.keyCode == '88') {
 				var augmentedMsg = {
-					type: "game", action: "move", move : "S", user: currentUsername };
+					type: "game", action: "move", move: "S", user: currentUsername
+				};
 				socket.send(JSON.stringify(augmentedMsg));
 			}
 			else if (e.keyCode == '37' || e.keyCode == '65') {
-				var augmentedMsg = { type: "game", action: "move", move : "W", user: currentUsername };
+				var augmentedMsg = { type: "game", action: "move", move: "W", user: currentUsername };
 				socket.send(JSON.stringify(augmentedMsg));
 			}
 			else if (e.keyCode == '39' || e.keyCode == '68') {
-				var augmentedMsg = { type: "game", action: "move", move : "E", user: currentUsername };
+				var augmentedMsg = { type: "game", action: "move", move: "E", user: currentUsername };
 				socket.send(JSON.stringify(augmentedMsg));
 			}
 			else if (e.keyCode == '81') {
-				var augmentedMsg = { type: "game", action: "move", move : "NW", user: currentUsername };
+				var augmentedMsg = { type: "game", action: "move", move: "NW", user: currentUsername };
 				socket.send(JSON.stringify(augmentedMsg));
 			}
 			else if (e.keyCode == '69') {
-				var augmentedMsg = { type: "game", action: "move", move : "NE", user: currentUsername };
+				var augmentedMsg = { type: "game", action: "move", move: "NE", user: currentUsername };
 				socket.send(JSON.stringify(augmentedMsg));
 			}
 			else if (e.keyCode == '67') {
-				var augmentedMsg = { type: "game", action: "move", move : "SE", user: currentUsername };
+				var augmentedMsg = { type: "game", action: "move", move: "SE", user: currentUsername };
 				socket.send(JSON.stringify(augmentedMsg));
 			}
 			else if (e.keyCode == '90') {
-				var augmentedMsg = { type: "game", action: "move", move : "SW", user: currentUsername };
+				var augmentedMsg = { type: "game", action: "move", move: "SW", user: currentUsername };
 				socket.send(JSON.stringify(augmentedMsg));
 			}
 		}
@@ -127,7 +134,7 @@ function move(){
 var currentUsername = "";
 var currentPassword = "";
 
-function login(user, pass){
+function login(user, pass) {
 	return $.ajax({
 		method: "POST",
 		url: "/api/registeredUsers/",
@@ -135,28 +142,27 @@ function login(user, pass){
 			username: user,
 			password: pass
 		}
-	}).done(function(data) {
+	}).done(function (data) {
 		currentUsername = user;
 		currentPassword = pass;
 		addActiveClient();
 	});
-	//Nothing special for failure
-} 
+}
 
 function register(username, password, name) {
-    return $.ajax({
-        method: "POST", // POST for sending password
-        url: "/api/registeredUsers/" + username + "/",
-        data: {
-            username: username,
-            password: password,
-            name: name
-        }
-    }).done(function (data) {
-        currentUsername = username;
+	return $.ajax({
+		method: "POST", // POST for sending password
+		url: "/api/registeredUsers/" + username + "/",
+		data: {
+			username: username,
+			password: password,
+			name: name
+		}
+	}).done(function (data) {
+		currentUsername = username;
 		currentPassword = password;
 		addActiveClient();
-    });
+	});
 }
 
 function getHighScores() {
@@ -167,7 +173,7 @@ function getHighScores() {
 }
 
 function logout() {
-	var msg = { type: "page-change", user: currentUsername, page: "logout"};
+	var msg = { type: "page-change", user: currentUsername, page: "logout" };
 	socket.send(JSON.stringify(msg));
 	currentUsername = "";
 	currentPassword = "";
@@ -190,14 +196,27 @@ function makePrivate(bool) {
 			score: "", //irrelevant
 			action: action
 		}
-	}).done(function(data) {
+	}).done(function (data) {
 		console.log("User privacy setting changed");
-	}).fail(function(xhr) {
+	}).fail(function (xhr) {
 		console.log("Could not change privacy setting");
 	});
 }
 
-function getUserHighScore(){ 
+function setHighScores(username, score) {
+
+	console.log(username, score);
+
+	return $.ajax({
+		method: "POST",
+		url: "/api/highScoresUpdate/" + username + "/",
+		data: {
+			scores: score
+		}
+	});
+}
+
+function getUserHighScore() {
 	return $.ajax({
 		method: "GET",
 		url: "/api/highScores/" + currentUsername + "/"

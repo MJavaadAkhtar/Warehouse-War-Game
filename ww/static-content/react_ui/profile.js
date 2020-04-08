@@ -18,7 +18,7 @@ class ProfileComponent extends React.Component {
     getUserHiScore(){
         var req = getUserHighScore();
         $.when(req).done((data) => {
-            window.alert(data);
+            // window.alert(data);
             var hiscore = data["high-score"];
             if (hiscore) {
                 this.setState({hiscore: data["high-score"]});
@@ -48,7 +48,8 @@ class ProfileComponent extends React.Component {
     render(props){
         return(
             <div id="profile" className="not-banner">
-                <h2>{currentUsername} <img src={this.state.avatarSrc} className="icon" /> </h2>
+                <div><img src={this.state.avatarSrc} className="icon" /></div>
+                <h2>Username: {currentUsername}  </h2>
                 <br/> <br/>
                 Name: {this.state.name} <br/>
                 High score: {this.state.hiscore} <br/>

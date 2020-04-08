@@ -1,12 +1,7 @@
-// Web socket stuff
+// Web socket initialization and functions.
 require('./static-content/lib/constants.js');
-port = wwPort;
-
-const Box = require('./Box');
-const AllMonsters = require('./Monster.js');
-const Monsters = AllMonsters.Monsters;
-const SmartMonsters = AllMonsters.SmartMonsters;
-const Stage = require('./Stage.js');
+port = wwPort; // The port number imported from constants.js
+const Stage = require('./Game Components/Stage.js');
 
 var clients={}; // {username: ws object}
 var clientsInLobby=[]; // [usernames]
@@ -18,14 +13,11 @@ var losers = [];
 var stage = new Stage(20, 20, "stage", "score", "E", wss);
 stage.initialize();
 
-// var stages = {};
-// stages[1] = stage;
 
+// Updating stage and monsters movement every 0.7 seconds
 setInterval(function () {
 	if (clientsInGame.length != 0){
-		// console.log("yoda1");
 		stage.moveMonsters(latestMove);
-		// console.log("yoda");
 		if (stage.getNumPlayers() != 0){
 			stage.displayUpdate();
 		}else{
@@ -36,7 +28,7 @@ setInterval(function () {
 	}
 }, 700);
 
-
+//Creating a websocket
 var WebSocketServer = require('ws').Server
    ,wss = new WebSocketServer({port: wwWsPort});
 
@@ -66,6 +58,7 @@ wss.on('connection', function(ws) {
 			case "page-change":
 				removeClientFromAllPages(msg.user);
 				if (msg.page === "lobby") {
+
 					clientsInLobby.push(msg.user);
 					while (losers.length > 0) {
 						console.log(losers);
@@ -102,66 +95,50 @@ wss.on('connection', function(ws) {
 	});
 });
 
+// Function to broad cast messages in the chat lobby
 wss.broadcastChat = function(message){
 	var augmentedMsg = { type: "chat", msg: message}
 	for(let username of clientsInLobby){ 
 		var ws = clients[username];
-		// console.log(message);
 		ws.send(JSON.stringify(augmentedMsg)); 
 	}
 }
 
+// Function to logout a user
 wss.forceLogout = function(ws) {
 	var augmentedMsg = { type: "logout" }; 
 	ws.send(JSON.stringify(augmentedMsg));
 	ws.close();
 }
 
+// function for Sending a server-side rendered stage 
 wss.sendStage = function(){
 	var ws;
-	if (stage.getNumPlayers() != 0){
-		
+	if (stage.getNumPlayers() != 0){	
 		stage.displayUpdate();
 	}
-	
 	if (clientsInGame.length !== stage.getClients().length) {
 		// console.log(stage.getClients());
 	}
 	var removeInds = [];
-
 	for (var i =0; i < clientsInGame.length; i++) {
 		var client = clientsInGame[i];
 		var ws = clients[client];
-		if (stage.getClients().indexOf(client) > -1) {
-			//console.log(client);
+		if (stage.getClients().indexOf(client) > -1) {			
 			var augmentedMsg = { type: "game", state: stage.getStage(), score: stage.getScore()};
-			// console.log("sending score " + clientScore + " to client " + client);
 			ws.send(JSON.stringify(augmentedMsg));
 		} else {
-			// console.log(client + " lost");
-			// var augmentedMsg = { type: "lose-game"};
-			//removeInds.push(i);
-			//removeClientFromAllPages(client);
 			losers.push(client);
-			// ws.send(JSON.stringify(augmentedMsg));
 			var augmentedMsg = { type: "lose-game", user:client,state: stage.getStage(), score: stage.getScore() };
-			// console.log("sending score " + clientScore + " to client " + client);
 			ws.send(JSON.stringify(augmentedMsg));
 			// removeClientFromAllPages(msg.user);
-		
-			// front-end will move client to lobby
 		}
 	}
-
-	// for (var i in removeInds) {
-	// 	console.log("comes here");
-	// 	clientsInGame.splice(i,1);
-	// }
 }
 
+//enter a client to game
 wss.enterGame = function(username){
 	HSscore[username] = 0;
-
 	clientsInGame.push(username);
 	stage.addPlayer(username);
 	var augmentedMsg = { type: "game", state: stage.getStage(), score: stage.getScore()};
@@ -186,7 +163,7 @@ wss.sendScores = function() {
 	}
 }
 
-
+// Removing client from everywhere
 function removeClientFromAllPages(username) {
 	var lobbyIndex = clientsInLobby.indexOf(username);
 	if (lobbyIndex > -1) {

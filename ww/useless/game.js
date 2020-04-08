@@ -4,7 +4,6 @@ function showGame() {
 	setupGame();
 	startGame();
 	if (running){
-	// $("#gameEasy").on("click", () => {setupGame("E"); startGame() });
 		document.onkeydown = checkKey;
 		function checkKey(e) {
 			e = e || window.event;
@@ -80,47 +79,3 @@ function pauseGame() {
 	// $("#Pause").hide();
 	// $("#Resume").show();
 }
-
-// function makeMove(str) {
-// 	stage.update();
-// 	stage.displayUpdate();
-// }
-
-
-
-//------------------------------------------------------------------------------------------------------------------------------------------------------------
-// function updateHighScore(newScore) {
-//     // First find current highest score for user
-//     $.ajax({
-// 		method: "GET",
-// 		url: "/api/highScores/" + currentUsername + "/"
-// 	}).done(function(data) {
-// 		if (!data) {   // !data means user has no scores
-// 			action = "insert"; // will need to insert rather than update
-// 		} else {
-// 			action = "update";
-// 		}
-// 		// Determine if update needed
-// 		if (!data || data["highest-score"] < newScore) {
-// 			// Update needed!
-// 			$.ajax({
-// 				method: "PUT",
-// 				url: "/api/highScores/" + currentUsername + "/",
-// 				data: {
-// 					username: currentUsername,
-// 					password: currentPassword,
-// 					score: newScore,
-// 					action: action
-// 				}
-// 			}).done(function(data) {
-// 				console.log("Highest score successfully updated!");
-// 			}).fail(function(xhr, status, err) { //401 and 500
-// 				console.log("Cannot set high score at the time");
-// 			});
-// 		} else {
-// 			console.log("No need to update score");
-// 		}
-// 	}).fail(function(xhr) {
-// 		console.log("Cannot access current high score");
-// 	});
-// }

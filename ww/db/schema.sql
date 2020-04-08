@@ -16,7 +16,7 @@ CREATE TABLE appuser (
 
 CREATE TABLE hiscores (
 	id INTEGER PRIMARY KEY,
-	score INT,
+	score INT DEFAULT 0,
 	username VARCHAR(20),
 	name VARCHAR(20),
 	private INTEGER DEFAULT 0,

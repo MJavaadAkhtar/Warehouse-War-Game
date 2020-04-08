@@ -32,6 +32,8 @@ module.exports = class Stage{
 		this.hashing = {};
 		// this.score = 1000;
 		this.s = "";
+
+		this.HS = {}
 	}
 	
 	isGameOver(){
@@ -39,15 +41,9 @@ module.exports = class Stage{
 	}
 	
 	initialize() {
-		// sList = clients;
-		//console.log(clients[0]);
 		this.monsters = 0;
-		// this.score = 1000;
 		this.hashing = {}; this.actors = [];
 		var boxnumber = Math.floor(((this.width * this.height) - ((this.width + this.height) * 2)) / 2);
-		//Going through all the players to get the stuff
-	
-		//this.hashing[s.x.toString() + "," + s.y.toString()] = s;
 		var m = "";
 		if (this.str == "E"){
 			var MonstersNumber;
@@ -64,7 +60,6 @@ module.exports = class Stage{
 			this.monsters  = MonstersNumber+1;//alert("comes hard "+this.monsters.toString());
 		}
 
-		// 	//This is adding the boxes to the hashmap
 		var k;
 		for (k = 0; k <= boxnumber; k++) {
 			var x = Math.floor((Math.random() * this.height - 1) + 1);
@@ -150,6 +145,7 @@ module.exports = class Stage{
 			this.clientUsernames.splice(usernameInd, 1);
 		}
 		if (this.players[username]) {
+			this.HS[username] = this.players[username].score;
 			var player = this.players[username];
 			delete this.hashing[player.x.toString() + "," + player.y.toString()];
 			delete this.players[username];
@@ -198,26 +194,26 @@ module.exports = class Stage{
 		}
 	}
 	getScore(){
-		var HS = {};
+		// var HS = {};
 		for (var player in this.players){
-			HS[player] = this.players[player].score;
+			this.HS[player] = this.players[player].score;
 		}
-		return HS;
+		return this.HS;
 	}
 	getScore(){
-		var HS = {};
+		// var HS = {};
 		for (var player in this.players){
-			HS[player] = this.players[player].score;
+			this.HS[player] = this.players[player].score;
 		}
-		return HS;
+		return this.HS;
 	}
 
 	getScore(){
-		var HS = {};
+		// var HS = {};
 		for (var player in this.players){
-			HS[player] = this.players[player].score;
+			this.HS[player] = this.players[player].score;
 		}
-		return HS;
+		return this.HS;
 	}
 
 	update() {		

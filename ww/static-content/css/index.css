@@ -1,8 +1,11 @@
 .icon {
     border-style:solid;
     border-width:1px;
-    width:25px;
-    height:25px
+    width:35px;
+    height:35px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #stage {
@@ -75,13 +78,15 @@
 #profile{
     color: #FFFAF0;
     position: absolute;
-    right:20px;
-    text-align:right;
+    /* right:20px; */
+    /* text-align:right; */
     background-color: black;
     opacity: 0.7;
     border-radius:4px;
     height: 300px;
-    width: 300px;
+    /* width: 300px; */
+    left: 30%;
+    padding: 1%;
     font-family: "Lucida Console", Monaco, monospace;
 }
 
